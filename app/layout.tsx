@@ -5,14 +5,14 @@ import { Share_Tech_Mono, VT323 } from 'next/font/google';
 const shareTechMono = Share_Tech_Mono({
   weight: '400',
   subsets: ['latin'],
-  variable: '--font-share-tech-mono',
+  variable: '--font-mono',
   display: 'swap',
 });
 
 const vt323 = VT323({
   weight: '400',
   subsets: ['latin'],
-  variable: '--font-vt323',
+  variable: '--font-vt',
   display: 'swap',
 });
 
