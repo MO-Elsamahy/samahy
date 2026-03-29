@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, useInView, animate } from 'framer-motion';
+import { Briefcase } from 'lucide-react';
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const BOOT_LINES = [
@@ -388,7 +389,7 @@ const TermLine = React.memo(({ l }: { l: TLine & { isCmd?: boolean } }) => {
 });
 TermLine.displayName = 'TermLine';
 
-function AgentTerminal({ onCommand, isTouring, onTourReady, onTourEnd }: { onCommand: (cmd: string, preventScroll?: boolean) => void, isTouring: boolean, onTourReady: () => void, onTourEnd: () => void }) {
+function AgentTerminal({ onCommand }: { onCommand: (cmd: string, preventScroll?: boolean) => void }) {
   const [lines, setLines] = useState<(TLine & { isCmd?: boolean })[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(true);
@@ -454,11 +455,9 @@ function AgentTerminal({ onCommand, isTouring, onTourReady, onTourEnd }: { onCom
         await new Promise(r => setTimeout(r, 300));
         await addLines([{ text: '>>> Terminal unlocks the site. Type a command to reveal sections.', color: '#ffb830' }], 15);
         setBusy(false);
-        // Show cinematic tour guide after boot
-        setTimeout(() => onTourReady(), 1200);
       })();
     }
-  }, [addLines, run, onTourReady]);
+  }, [addLines, run]);
 
   // Fix: Target scroll to just the container, preventing the whole page from jumping down
   useEffect(() => {
@@ -472,7 +471,6 @@ function AgentTerminal({ onCommand, isTouring, onTourReady, onTourEnd }: { onCom
     if (busy || !input.trim()) return;
     setHist(h => [input, ...h.slice(0, 19)]);
     setHIdx(-1);
-    if (isTouring) onTourEnd();
     run(input);
     setInput('');
   };
@@ -485,13 +483,11 @@ function AgentTerminal({ onCommand, isTouring, onTourReady, onTourEnd }: { onCom
   return (
     <>
       <div style={{
-        border: isTouring ? '1px solid #39ff6e' : '1px solid rgba(0,230,57,0.3)', borderRadius: 8, background: '#0c170c',
+        border: '1px solid rgba(0,230,57,0.3)', borderRadius: 8, background: '#0c170c',
         position: 'relative', overflow: 'hidden',
-        boxShadow: isTouring
-          ? '0 0 0 9999px rgba(2,6,2,0.85), 0 0 80px rgba(0,230,57,0.5), inset 0 0 40px rgba(0,0,0,0.5)'
-          : '0 0 60px rgba(0,230,57,0.08), inset 0 0 40px rgba(0,0,0,0.5)',
+        boxShadow: '0 0 60px rgba(0,230,57,0.08), inset 0 0 40px rgba(0,0,0,0.5)',
         display: 'flex', flexDirection: 'column', height: '100%', minHeight: 460,
-        zIndex: isTouring ? 9999 : 1, transition: 'box-shadow 0.8s ease'
+        zIndex: 1, transition: 'box-shadow 0.8s ease'
       }}>
         {/* Dynamic scanline layer */}
         <div style={{
@@ -529,7 +525,6 @@ function AgentTerminal({ onCommand, isTouring, onTourReady, onTourEnd }: { onCom
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={onKey}
-              onFocus={() => { if (isTouring) onTourEnd() }}
               disabled={busy}
               placeholder={busy ? 'System Processing...' : "Type a navigation command (e.g. skills, contact)"}
               style={{
@@ -551,51 +546,7 @@ function AgentTerminal({ onCommand, isTouring, onTourReady, onTourEnd }: { onCom
         </form>
       </div>
 
-      {/* Cinematic Tour Guide Panel */}
-      {isTouring && (
-        <div style={{
-          position: 'fixed', left: 'max(4vw, calc(50vw - 480px))', top: '50%', transform: 'translateY(-50%)',
-          width: 'min(92vw, 420px)', zIndex: 10000, pointerEvents: 'auto'
-        }}>
-          <motion.div
-            initial={{ opacity: 0, x: -40, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            style={{
-              background: 'rgba(5, 15, 5, 0.85)', border: '1px solid rgba(0,230,57,0.5)',
-              padding: 32, borderRadius: 12, boxShadow: '0 30px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,230,57,0.1)',
-              backdropFilter: 'blur(12px)'
-            }}
-          >
-            <div className="section-tag" style={{ marginBottom: 16, background: 'var(--green)', color: '#000', padding: '4px 10px', display: 'inline-block' }}>SYSTEM ENTRUSTED</div>
-            <h2 style={{ fontSize: 28, color: '#fff', marginBottom: 12, fontFamily: 'var(--font-vt)' }}>MZ-OS GUEST MODE</h2>
-            <p style={{ color: 'var(--gray)', fontSize: 14, lineHeight: 1.8, marginBottom: 24 }}>
-              Welcome to the interactive portfolio command center.<br /><br />
-              To unlock the system and view the creator&apos;s digital footprint, you must interface with the highlighted terminal.
-            </p>
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 11, color: 'var(--cyan)', letterSpacing: 1, marginBottom: 12 }}>SUGGESTED COMMANDS:</div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <button onClick={() => { onTourEnd(); run('skills'); }} className="hero-btn" style={{ padding: '10px 16px', fontSize: 13, flex: 1, justifyContent: 'center' }}>› skills</button>
-                <button onClick={() => { onTourEnd(); run('contact'); }} className="hero-btn" style={{ padding: '10px 16px', fontSize: 13, flex: 1, justifyContent: 'center' }}>› contact</button>
-              </div>
-            </div>
-            <button onClick={() => { onTourEnd(); inputRef.current?.focus(); }} style={{
-              width: '100%', padding: '14px', background: 'var(--green)', color: '#000',
-              border: 'none', borderRadius: 4, fontFamily: 'var(--font-mono)', fontWeight: 'bold', cursor: 'pointer',
-              letterSpacing: 2, transition: 'all 0.2s', textTransform: 'uppercase'
-            }}>
-              [ CLICK TO HACK IN ]
-            </button>
-          </motion.div>
-          {/* Glow arrow pointing to terminal */}
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }}
-            style={{ position: 'absolute', right: -40, top: '50%', transform: 'translateY(-50%)', width: 40, height: 2, background: 'var(--green)' }}>
-            <div style={{ position: 'absolute', right: 0, top: -5, width: 12, height: 12, borderTop: '2px solid var(--green)', borderRight: '2px solid var(--green)', transform: 'rotate(45deg)' }} />
-          </motion.div>
-        </div>
-      )}
+      </div>
     </>
   );
 }
@@ -605,7 +556,6 @@ export default function Home() {
   const [booted, setBooted] = useState(false);
   const [bootN, setBootN] = useState(0);
   const [activeSections, setActiveSections] = useState<string[]>([]);
-  const [isTouring, setIsTouring] = useState(false);
 
   // Commands map to section IDs
   const handleCommand = useCallback((cmd: string, preventScroll = false) => {
@@ -669,7 +619,7 @@ export default function Home() {
         <Nav activeSections={activeSections} onCommand={handleCommand} />
 
         {/* ── SPLIT-SCREEN HERO (WOW FACTOR) ── */}
-        <section id="top" style={{ minHeight: 'calc(100vh - 52px)', display: 'flex', alignItems: 'center', paddingTop: 52, paddingBottom: 52, position: 'relative', overflow: isTouring ? 'visible' : 'hidden' }}>
+        <section id="top" style={{ minHeight: 'calc(100vh - 52px)', display: 'flex', alignItems: 'center', paddingTop: 52, paddingBottom: 52, position: 'relative', overflow: 'hidden' }}>
           <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(0,230,57,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,57,0.055) 1px,transparent 1px)', backgroundSize: '72px 72px', zIndex: 0 }} />
           {[{ top: '-10%', left: '-5%', size: 500, c: 'rgba(0,230,57,0.06)' }, { top: '60%', right: '-5%', size: 400, c: 'rgba(41,212,255,0.05)' }, { top: '30%', left: '40%', size: 300, c: 'rgba(0,230,57,0.04)' }].map((o, i) => (
             <div key={i} aria-hidden style={{ position: 'absolute', borderRadius: '50%', width: o.size, height: o.size, background: `radial-gradient(circle,${o.c},transparent 70%)`, top: o.top, ...(o as { left?: string; right?: string }), animation: `floatY ${5 + i * 2}s ease-in-out ${i}s infinite`, pointerEvents: 'none', zIndex: 0, willChange: 'transform' }} />
@@ -680,15 +630,19 @@ export default function Home() {
 
           <div className="container hero-grid" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
             {/* HERO LEFT: PROFILE & STATS */}
-            <div className="hero-left" style={{ opacity: isTouring ? 0.4 : 1, transition: 'opacity 0.8s ease', pointerEvents: isTouring ? 'none' : 'auto' }}>
+            <div className="hero-left">
               <TermWin title="TERMINAL — C:\\USERS\\AMIR\\PORTFOLIO.EXE">
                 <>
                   <Prompt cmd="whoami --full --verbose" />
                   <div style={{ marginBottom: 16, color: 'rgba(0,230,57,0.25)', fontSize: 11, letterSpacing: 4, userSelect: 'none' }}>════════════════════════════════════════════</div>
-                  <h1 className="glitch neon-heading" data-text="Mohamed Amir Elsamahy"
-                    style={{ fontSize: 'clamp(32px,6vw,56px)', marginBottom: 14, letterSpacing: 3, fontFamily: 'var(--font-vt)' }}>
-                    Mohamed Amir Elsamahy
-                  </h1>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 14 }}>
+                    <Briefcase size={44} style={{ color: 'var(--green)', filter: 'drop-shadow(0 0 15px rgba(0,230,57,0.6))' }} />
+                    <h1 className="glitch neon-heading" data-text="Mohamed Amir Elsamahy"
+                      style={{ fontSize: 'clamp(32px,6vw,56px)', marginBottom: 0, letterSpacing: 3, fontFamily: 'var(--font-vt)' }}>
+                      Mohamed Amir Elsamahy
+                    </h1>
+                  </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 0', marginBottom: 22 }}>
                     <span style={{ fontFamily: 'var(--font-vt)', fontSize: 24, letterSpacing: 2, color: 'var(--cyan)', textShadow: '0 0 14px rgba(41,212,255,0.6)' }}>AI Specialist</span>
                     <span style={{ color: 'var(--green-muted)', margin: '0 16px' }}>|</span>
@@ -719,7 +673,7 @@ export default function Home() {
 
             {/* HERO RIGHT: TERMINAL ENGINE (DESKTOP ONLY) */}
             <div className="hero-right desktop-only" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <AgentTerminal onCommand={handleCommand} isTouring={isTouring} onTourReady={() => setIsTouring(true)} onTourEnd={() => setIsTouring(false)} />
+              <AgentTerminal onCommand={handleCommand} />
               <div style={{ marginTop: 18, fontSize: 12, color: 'var(--green-dim)', textAlign: 'center', letterSpacing: 1 }}>
                   {/* // AWAITING USER COMMAND // */}
               </div>
