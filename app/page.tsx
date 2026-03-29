@@ -744,7 +744,7 @@ export default function Home() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                     <div className="ascii-box" data-label="[ EDUCATION ]">
                       <div style={{ color: 'var(--amber)', fontSize: 11, letterSpacing: 3, marginBottom: 6 }}>2019 — 2023</div>
-                      <div style={{ fontFamily: 'var(--font-vt)', fontSize: 22, color: 'var(--green)', marginBottom: 4 }}>B.Sc. Statistics &amp; Computer Science</div>
+                      <div style={{ fontFamily: 'var(--font-vt)', fontSize: 22, color: 'var(--green)', marginBottom: 4 }}>B.Sc. Statistics </div>
                       <div style={{ fontSize: 12.5, color: 'var(--cyan)', marginBottom: 8 }}>Cairo University — Economics &amp; Political Science</div>
                       <div style={{ fontSize: 12, color: 'var(--gray)', fontStyle: 'italic' }}>Graduation Project: Applied Statistics in AI — reducing model parameters while maintaining efficiency</div>
                     </div>
