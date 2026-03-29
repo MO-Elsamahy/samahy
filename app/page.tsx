@@ -160,10 +160,10 @@ const AGENT_COMMANDS: Record<string, TLine[]> = {
     { text: '  · NLP & Text Analytics', color: '#00e639' },
   ],
   projects: [
-    { text: '[ PROJECTS — Loading... ]', color: '#ffb830' },
-    { text: '  Portfolio section coming soon.', color: '#4a7a4a' },
-    { text: '  Message me directly for a full project list.', color: '#4a7a4a' },
-    { text: '  EMAIL: mohamed.amir2022@feps.edu.eg', color: '#29d4ff' },
+    { text: '[ PROJECTS — Accessing... ]', color: '#ffb830' },
+    { text: '  › Portfolio Hub: https://hi.samahy.tech/', color: '#00e639' },
+    { text: '  › Status: High Fidelity OS Experience', color: '#ccf0cc' },
+    { text: '  › Contact: info@samahy.tech', color: '#29d4ff' },
   ],
 };
 const UNKNOWN_CMD = (cmd: string): TLine[] => [
@@ -545,9 +545,8 @@ function AgentTerminal({ onCommand }: { onCommand: (cmd: string, preventScroll?:
           </button>
         </form>
       </div>
-
-      </div>
     </>
+
   );
 }
 
@@ -656,7 +655,13 @@ export default function Home() {
                     Founder of <strong>MZ for Tech Solutions</strong>. Executive Director at <strong>EMAM Organization</strong>.
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 28 }}>
-                    {[{ label: '[ LinkedIn ]', href: 'https://www.linkedin.com/in/mohamedaelsamahy' }, { label: '[ GitHub ]', href: 'https://github.com/mo-elsamahy' }, { label: '[ Email ]', href: 'mailto:mohamed.amir2022@feps.edu.eg' }].map(l => (
+                    {[
+                      { label: '[ Portfolio ]', href: 'https://hi.samahy.tech/' },
+                      { label: '[ LinkedIn ]', href: 'https://www.linkedin.com/in/mohamedaelsamahy' },
+                      { label: '[ GitHub ]', href: 'https://github.com/mo-elsamahy' },
+                      { label: '[ Facebook ]', href: 'https://www.facebook.com/M.ELSAMAHYY/' },
+                      { label: '[ Email ]', href: 'mailto:info@samahy.tech' }
+                    ].map(l => (
                       <a key={l.label} href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="hero-btn">{l.label}</a>
                     ))}
                   </div>
@@ -790,7 +795,13 @@ export default function Home() {
                 <TermWin title="CONTACT SESSION OPEN">
                   <p style={{ color: 'var(--gray)', fontSize: 13, marginBottom: 24, lineHeight: 1.9 }}><span style={{ color: 'var(--green)' }}>&gt;</span> Ready to collaborate on AI, climate tech, or consulting. Response time: <strong>24–48 hrs</strong>.</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {[{ icon: '@', label: 'EMAIL', text: 'mohamed.amir2022@feps.edu.eg', href: 'mailto:mohamed.amir2022@feps.edu.eg' }, { icon: 'in', label: 'LINKEDIN', text: '/in/mohamedaelsamahy', href: 'https://www.linkedin.com/in/mohamedaelsamahy' }, { icon: '</>', label: 'GITHUB', text: 'github.com/mo-elsamahy', href: 'https://github.com/mo-elsamahy' }, { icon: '#', label: 'PHONE', text: '+20 111 987 0082', href: 'tel:+201119870082' }].map(c => (
+                    {[
+                      { icon: '★', label: 'PORTFOLIO', text: 'hi.samahy.tech', href: 'https://hi.samahy.tech/' },
+                      { icon: '@', label: 'EMAIL', text: 'info@samahy.tech', href: 'mailto:info@samahy.tech' },
+                      { icon: 'in', label: 'LINKEDIN', text: '/in/mohamedaelsamahy', href: 'https://www.linkedin.com/in/mohamedaelsamahy' },
+                      { icon: 'f', label: 'FACEBOOK', text: '/M.ELSAMAHYY/', href: 'https://www.facebook.com/M.ELSAMAHYY/' },
+                      { icon: '</>', label: 'GITHUB', text: 'github.com/mo-elsamahy', href: 'https://github.com/mo-elsamahy' },
+                    ].map(c => (
                       <a key={c.label} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="contact-link">
                         <span className="contact-icon">{c.icon}</span>
                         <div><div className="contact-sub">{c.label}</div><div>{c.text}</div></div>
